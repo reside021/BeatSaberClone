@@ -5,16 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class MenuButton : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject _exitMenu;
+
     public void StartGame()
     {
         SceneManager.LoadScene("Game");
-    }
-
-    public void ExitGame()
-    {
-        // TODO: Сделать перевод на сцену с уточнением хочет ли игрок выйти и закрыть игру
-        Application.Quit();
-        Debug.Log("Exit pressed!");
     }
 
     public void TrackEditor()
@@ -27,6 +23,23 @@ public class MenuButton : MonoBehaviour
     {
         // TODO: Сделать переход на сцену рекордов
         //SceneManager.LoadScene("Records");
+    }
+
+
+    public void ExitMessageMenu()
+    {
+        _exitMenu.SetActive(true);
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+        Debug.Log("Exit!");
+    }
+
+    public void CancelExit()
+    {
+        _exitMenu.SetActive(false);
     }
 
 }
