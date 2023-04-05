@@ -15,14 +15,12 @@ public class MenuButton : MonoBehaviour
 
     public void TrackEditor()
     {
-        // TODO: Сделать переход на сцену редактора треков
-        //SceneManager.LoadScene("TrackEditor");
+        SceneManager.LoadScene("TrackEditor");
     }
 
     public void Records()
     {
-        // TODO: Сделать переход на сцену рекордов
-        //SceneManager.LoadScene("Records");
+        SceneManager.LoadScene("Records");
     }
 
 
