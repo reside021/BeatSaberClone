@@ -8,16 +8,6 @@ public class MoveCube : MonoBehaviour
     public float Speed = 5f;
 
 
-    [SerializeField] private Transform transform;
-
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
     void FixedUpdate()
     {
         MovementLogic();
@@ -35,14 +25,4 @@ public class MoveCube : MonoBehaviour
         transform.Translate(movement * Speed * Time.fixedDeltaTime);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    void OnBecameInvisible()
-    {
-        Destroy(gameObject);
-    }
 }
