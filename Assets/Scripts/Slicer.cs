@@ -7,11 +7,6 @@ public class Slicer : MonoBehaviour
     public Transform cutPlane;
     public Material crossMaterial;
 
-    private void Start()
-    {
-        Cursor.visible= false;
-    }
-
     private void FixedUpdate()
     {
         var mousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, transform.position.z);
