@@ -44,8 +44,9 @@ public class Slicer : MonoBehaviour
         MeshCollider collider = go.AddComponent<MeshCollider>();
         collider.convex = true;
         go.AddComponent<Destroyer>();
-
         rb.AddExplosionForce(100, go.transform.position, 20);
+        rb.AddForce(Vector3.back * 4, ForceMode.Impulse);
+        rb.mass= 5f;
     }
 
     private SlicedHull SliceObject(GameObject obj, Material crossSectionMaterial = null)
