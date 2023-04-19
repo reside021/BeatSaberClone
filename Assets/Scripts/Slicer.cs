@@ -8,9 +8,12 @@ public class Slicer : MonoBehaviour
     public Transform cutPlane;
     public Material crossMaterial;
 
-    public int score;
+    public double score;
 
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI numberComboText;
+
+    private int combo = 1;
 
     private void FixedUpdate()
     {
@@ -18,8 +21,13 @@ public class Slicer : MonoBehaviour
         Vector3 objPosition = Camera.main.ScreenToWorldPoint(mousePosition);    
         transform.position = objPosition;
 
-        scoreText.text = score.ToString();
+        
+
+        numberComboText.text = combo.ToString();
+
+        scoreText.text = (score * combo).ToString();
     }
+
 
     private void OnCollisionEnter(Collision otherObj)
     {
@@ -38,11 +46,18 @@ public class Slicer : MonoBehaviour
                 AddHullComponents(bottom);
                 AddHullComponents(top);
                 Destroy(otherObj.gameObject);
-                score++;
+                AddScoreAndCombo();
             }
 
 
         }
+    }
+
+    private void AddScoreAndCombo()
+    {
+        score++;
+        if (score % 5 == 0) 
+            combo++;
     }
 
     private void AddHullComponents(GameObject go)
