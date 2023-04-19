@@ -1,5 +1,6 @@
 using UnityEngine;
 using EzySlice;
+using TMPro;
 
 public class Slicer : MonoBehaviour
 {
@@ -7,11 +8,17 @@ public class Slicer : MonoBehaviour
     public Transform cutPlane;
     public Material crossMaterial;
 
+    public int score;
+
+    public TextMeshProUGUI scoreText;
+
     private void FixedUpdate()
     {
         var mousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, transform.position.z);
         Vector3 objPosition = Camera.main.ScreenToWorldPoint(mousePosition);    
         transform.position = objPosition;
+
+        scoreText.text = score.ToString();
     }
 
     private void OnCollisionEnter(Collision otherObj)
@@ -31,6 +38,7 @@ public class Slicer : MonoBehaviour
                 AddHullComponents(bottom);
                 AddHullComponents(top);
                 Destroy(otherObj.gameObject);
+                score++;
             }
 
 
