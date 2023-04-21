@@ -8,12 +8,13 @@ public class Slicer : MonoBehaviour
     public Transform cutPlane;
     public Material crossMaterial;
 
-    public double score;
-
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI numberComboText;
 
-    private int combo = 1;
+    public static int combo = 1;
+
+    private double score = 1;
+    private int point = 1;
 
     private void FixedUpdate()
     {
@@ -25,7 +26,7 @@ public class Slicer : MonoBehaviour
 
         numberComboText.text = combo.ToString();
 
-        scoreText.text = (score * combo).ToString();
+        scoreText.text = score.ToString();
     }
 
 
@@ -55,7 +56,7 @@ public class Slicer : MonoBehaviour
 
     private void AddScoreAndCombo()
     {
-        score++;
+        score += point * combo;
         if (score % 5 == 0) 
             combo++;
     }
@@ -68,8 +69,8 @@ public class Slicer : MonoBehaviour
         collider.convex = true;
         go.AddComponent<Destroyer>();
         rb.AddExplosionForce(100, go.transform.position, 20);
-        rb.AddForce(Vector3.back * 4, ForceMode.Impulse);
-        rb.mass= 5f;
+        rb.AddForce(Vector3.back * 3, ForceMode.Impulse);
+        rb.mass= 2f;
     }
 
     private SlicedHull SliceObject(GameObject obj, Material crossSectionMaterial = null)

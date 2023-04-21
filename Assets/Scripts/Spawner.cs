@@ -10,7 +10,6 @@ public class Spawner : MonoBehaviour
     public float timeSpawn = 2f;
     private float timer;
 
-    // Start is called before the first frame update
     void Start()
     {
         timer = timeSpawn;
@@ -25,11 +24,5 @@ public class Spawner : MonoBehaviour
             timer = timeSpawn;
             Instantiate(cubePrefab, transform);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
