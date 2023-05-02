@@ -13,7 +13,7 @@ public class Slicer : MonoBehaviour
 
     public static int combo = 1;
 
-    private double score = 1;
+    private double score = 0;
     private int point = 1;
 
     private void FixedUpdate()
@@ -70,7 +70,6 @@ public class Slicer : MonoBehaviour
         go.AddComponent<Destroyer>();
         rb.AddExplosionForce(100, go.transform.position, 20);
         rb.AddForce(Vector3.back * 3, ForceMode.Impulse);
-        rb.mass= 2f;
     }
 
     private SlicedHull SliceObject(GameObject obj, Material crossSectionMaterial = null)
