@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class MenuButton : MonoBehaviour
 {
     public GameObject _exitMenu;
+    public AudioSource SoundManager;
 
     public Button BtnPlay;
     public Button BtnEditor;

@@ -11,10 +11,17 @@ public class Slicer : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI numberComboText;
 
-    public static int combo = 1;
+    public static int combo;
 
-    private double score = 0;
-    private int point = 1;
+    private double score;
+    private const int point = 1;
+
+
+    private void Start()
+    {
+        score = 0;
+        combo = 1;
+    }
 
     private void FixedUpdate()
     {
