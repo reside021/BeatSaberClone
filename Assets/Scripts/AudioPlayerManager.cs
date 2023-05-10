@@ -17,23 +17,22 @@ public class AudioPlayerManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+
+            var mySubFolder = Path.Combine(Application.persistentDataPath, "MusicForGame");
+            if (!Directory.Exists(mySubFolder))
+            {
+                Directory.CreateDirectory(mySubFolder);
+            }
+
+            LoadDefaultTrack();
+            LoadCustomTrack();
+            SetStartTrack();
+
             return;
         }
-        if (instance == this) return;
+        if (instance == this)
+            return;
         Destroy(gameObject);
-    }
-
-    private void Start()
-    {
-        var mySubFolder = Path.Combine(Application.persistentDataPath, "MusicForGame");
-        if (!Directory.Exists(mySubFolder))
-        {
-            Directory.CreateDirectory(mySubFolder);
-        }
-
-        LoadDefaultTrack();
-        LoadCustomTrack();
-        PlayMusic();
     }
 
 
@@ -74,11 +73,10 @@ public class AudioPlayerManager : MonoBehaviour
         return ac;
     }
 
-    private void PlayMusic()
+    private void SetStartTrack()
     {
         var audioClip = MusicData.audioClips[Random.Range(0, MusicData.audioClips.Count - 1)];
         audioSource.clip = audioClip;
-        audioSource.Play();
     }
 
 }
