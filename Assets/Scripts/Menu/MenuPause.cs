@@ -38,7 +38,7 @@ public class MenuPause : MonoBehaviour
     {
         panelPause.SetActive(false);
         Time.timeScale = 1f;
-        audioSource.Play();
+        audioSource.UnPause();
     }
 
     private void RestartLevel()

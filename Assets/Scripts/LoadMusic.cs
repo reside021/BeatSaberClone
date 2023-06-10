@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using NLayer;
+using System;
+using UnityEngine.EventSystems;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Linq;
 
 public class LoadMusic : MonoBehaviour
 {
@@ -13,8 +17,15 @@ public class LoadMusic : MonoBehaviour
 
     public TextMeshProUGUI trackNowPlayingText;
 
+
+    public GameObject checkMark;
+    public GameObject crossMark;
     private GameObject soundManager;
+
     private AudioSource audioSource;
+
+
+    private List<string> filesMap = new List<string>();
 
     private void Start()
     {
@@ -23,10 +34,21 @@ public class LoadMusic : MonoBehaviour
 
         trackNowPlayingText.text = audioSource.clip.name;
 
+        CheckHaveMap();
+
         UpdateItems();
     }
 
-    public void UpdateItems()
+    private void CheckHaveMap()
+    {
+        var mySubFolder = Path.Combine(Application.persistentDataPath, "dataLVL");
+        if (!Directory.Exists(mySubFolder))
+            return;
+
+        Directory.GetFiles(mySubFolder).ToList().ForEach(file => { filesMap.Add(Path.GetFileName(file)); }); 
+    }
+
+    private void UpdateItems()
     {
         ClearMusicList();
         LoadTrackInList();
@@ -53,24 +75,30 @@ public class LoadMusic : MonoBehaviour
 
     private void InitializeItemView(GameObject gameObject, AudioClip audioClip)
     {
-        foreach (Transform child in gameObject.transform)
-        {
-            if (child.tag == "TrackName")
-            {
-                child.GetComponent<TextMeshProUGUI>().text = audioClip.name;
-            }
-            else
-            {
-                child.GetComponent<Button>().onClick.AddListener(
-                    () =>
+        gameObject.transform.GetChild(0)
+            .GetComponent<TextMeshProUGUI>()
+            .text = audioClip.name;
+
+        gameObject.transform.GetChild(1)
+            .GetComponent<Button>()
+            .onClick
+            .AddListener(() =>
                     {
                         audioSource.clip = audioClip;
                         trackNowPlayingText.text = audioClip.name;
+                        audioSource.time = 0;
                         audioSource.Play();
-                    }
-                );
-            }
+                    });
+
+        var imageCheck = gameObject.transform.GetChild(2).Find("ImageCheck");
+        var imageCross = gameObject.transform.GetChild(2).Find("ImageCross");
+
+        if (filesMap.Any(x => x.Equals($"{audioClip.name}.dat")))
+        {
+            imageCross.gameObject.SetActive(false);
+            imageCheck.gameObject.SetActive(true);
         }
+        
     }
 
 }
