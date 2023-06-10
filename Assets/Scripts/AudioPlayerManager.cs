@@ -1,7 +1,9 @@
-using NLayer;
+using System;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class AudioPlayerManager : MonoBehaviour
 {
@@ -11,7 +13,10 @@ public class AudioPlayerManager : MonoBehaviour
 
     public AudioClip[] defaultTracks;
 
-    private void Awake()
+
+    private Action<AudioClip> onResponsed;
+
+    private void Start()
     {
         if (instance == null)
         {
@@ -24,6 +29,8 @@ public class AudioPlayerManager : MonoBehaviour
                 Directory.CreateDirectory(mySubFolder);
             }
 
+            MusicData.audioClips.Clear();
+
             LoadDefaultTrack();
             LoadCustomTrack();
             SetStartTrack();
@@ -33,6 +40,16 @@ public class AudioPlayerManager : MonoBehaviour
         if (instance == this)
             return;
         Destroy(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        onResponsed += LoadMusic;
+    }
+
+    private void OnDisable()
+    {
+        onResponsed -= LoadMusic;
     }
 
 
@@ -50,33 +67,47 @@ public class AudioPlayerManager : MonoBehaviour
             .ToList()
             .ForEach(f =>
             {
-                AudioClip track = LoadMp3(f);
-                MusicData.audioClips.Add(track);
+                string filePath = "file:///" + f;
+                StartCoroutine(LoadAudioFromServer(filePath, AudioType.MPEG, onResponsed));
             });
     }
 
 
-    public AudioClip LoadMp3(string filePath)
+
+    public void LoadMusic(AudioClip track)
     {
-        string filename = Path.GetFileNameWithoutExtension(filePath);
+        if (track == null) return;
+        MusicData.audioClips.Add(track);
+    }
 
-        MpegFile mpegFile = new MpegFile(filePath);
+    IEnumerator LoadAudioFromServer(string filePath, AudioType audioType, Action<AudioClip> response)
+    {
+        using (UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(filePath, audioType))
+        {
+            yield return request.SendWebRequest();
 
-        AudioClip ac = AudioClip.Create(filename,
-                                        (int)(mpegFile.Length / sizeof(float) / mpegFile.Channels),
-                                        mpegFile.Channels,
-                                        mpegFile.SampleRate,
-                                        true,
-                                        data => { int actualReadCount = mpegFile.ReadSamples(data, 0, data.Length); },
-                                        position => { mpegFile = new MpegFile(filePath); });
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string fileName = Path.GetFileNameWithoutExtension(filePath);
+                var audioClip = DownloadHandlerAudioClip.GetContent(request);
+                audioClip.name = fileName;
+                response(audioClip);
+            }
+            else
+            {
+                Debug.LogErrorFormat("error request [{0}, {1}]", filePath, request.error);
 
-        return ac;
+                response(null);
+            }
+        }
+
     }
 
     private void SetStartTrack()
     {
-        var audioClip = MusicData.audioClips[Random.Range(0, MusicData.audioClips.Count - 1)];
+        var audioClip = MusicData.audioClips[UnityEngine.Random.Range(0, MusicData.audioClips.Count - 1)];
         audioSource.clip = audioClip;
+        audioSource.Play();
     }
 
 }
