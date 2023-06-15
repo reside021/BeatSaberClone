@@ -86,8 +86,8 @@ public class EditorUI : MonoBehaviour
     public Button BtnSaveLvL;
     public Button BtnDeleteLvL;
 
-    public Slider sliderPlayingTrack;
-    public TextMeshProUGUI nowLengthTrack;
+    public Slider SliderPlayingTrack;
+    public TextMeshProUGUI NowLengthTrack;
 
     public Rigidbody TrackRoad;
 
@@ -97,31 +97,31 @@ public class EditorUI : MonoBehaviour
     public GameObject PlayMusicControl;
     public GameObject PauseMusicControl;
 
-    private GameObject prevItemTrack = null;
-    private GameObject currentActiveCube;
-    private GameObject currentItemTrack = null;
-    private GameObject soundManager;
+    private GameObject _prevItemTrack = null;
+    private GameObject _currentActiveCube;
+    private GameObject _currentItemTrack = null;
+    private GameObject _soundManager;
 
-    private AudioSource audioSource;
+    private AudioSource _audioSource;
 
-    private Transform currentActiveLvL = null;
+    private Transform _currentActiveLvL = null;
 
-    private Vector3 ray_start_position = Vector3.zero;
-    private Vector3[] setBlockPositionUpper = new Vector3[12];
-    private Vector3[] setBlockPositionUnder = new Vector3[12];
-    private Vector3[] setBlockPositionCurrent = new Vector3[12];
+    private Vector3 _ray_start_position = Vector3.zero;
+    private Vector3[] _setBlockPositionUpper = new Vector3[12];
+    private Vector3[] _setBlockPositionUnder = new Vector3[12];
+    private Vector3[] _setBlockPositionCurrent = new Vector3[12];
 
-    private TypeBlock[] typeBlockCurrent = new TypeBlock[12];
-    private TypeBlock[] typeBlockUnder = new TypeBlock[12];
-    private TypeBlock[] typeBlockUpper = new TypeBlock[12];
+    private TypeBlock[] _typeBlockCurrent = new TypeBlock[12];
+    private TypeBlock[] _typeBlockUnder = new TypeBlock[12];
+    private TypeBlock[] _typeBlockUpper = new TypeBlock[12];
 
 
-    private Dictionary<int, Vector3> positionBlock;
+    private Dictionary<int, Vector3> _positionBlock;
 
 
     private int _currentIndexPositionCube = 0;
-    private readonly int layerMaskOnlyElementTrack = 1 << 6;
-    private readonly int layerMaskOnlyCube = 1 << 7;
+    private readonly int _layerMaskOnlyElementTrack = 1 << 6;
+    private readonly int _layerMaskOnlyCube = 1 << 7;
 
     private int CurrentIndexPositionCube
     {
@@ -138,18 +138,18 @@ public class EditorUI : MonoBehaviour
 
     private void Awake()
     {
-        soundManager = GameObject.FindGameObjectsWithTag("SoundManager")[0];
-        audioSource = soundManager.GetComponent<AudioSource>();
-        audioSource.Stop();
-        audioSource.Play();
-        audioSource.Pause();
+        _soundManager = GameObject.FindGameObjectsWithTag("SoundManager")[0];
+        _audioSource = _soundManager.GetComponent<AudioSource>();
+        _audioSource.Stop();
+        _audioSource.Play();
+        _audioSource.Pause();
     }
 
     void Start()
     {
         AddListenerForButton();
 
-        ray_start_position = new Vector3(Screen.width / 2, Screen.height / 2.9f, 0);
+        _ray_start_position = new Vector3(Screen.width / 2, Screen.height / 2.9f, 0);
 
         CreateGridPositionBlock();
     }
@@ -158,9 +158,9 @@ public class EditorUI : MonoBehaviour
     {
         releaseRay();
 
-        if (audioSource.isPlaying)
+        if (_audioSource.isPlaying)
         {
-            var newPosition = audioSource.time * 10.1f;
+            var newPosition = _audioSource.time * 10.1f;
             TrackRoad.position = new Vector3(newPosition, 0.0f, 0.0f);
 
             PauseImageEnable();
@@ -180,7 +180,7 @@ public class EditorUI : MonoBehaviour
 
     private void CreateGridPositionBlock()
     {
-        positionBlock = new Dictionary<int, Vector3>()
+        _positionBlock = new Dictionary<int, Vector3>()
         {
             { 0, new Vector3(3.5f, 0.0f, 3.5f) },
             { 1, new Vector3(3.5f, 0.0f, 0.0f) },
@@ -219,7 +219,7 @@ public class EditorUI : MonoBehaviour
 
     private void DeleteLvL()
     {
-        var filePath = Path.Combine(Application.persistentDataPath, "dataLVL", $"{audioSource.clip.name}.dat");
+        var filePath = Path.Combine(Application.persistentDataPath, "dataLVL", $"{_audioSource.clip.name}.dat");
         File.Delete(filePath);
         Back();
     }
@@ -243,7 +243,7 @@ public class EditorUI : MonoBehaviour
         try
         {
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream fileStream = File.Create(Application.persistentDataPath + "/dataLVL/" + $"{audioSource.clip.name}.dat");
+            FileStream fileStream = File.Create(Application.persistentDataPath + "/dataLVL/" + $"{_audioSource.clip.name}.dat");
             bf.Serialize(fileStream, SaveData.dataLvL);
             fileStream.Close();
             Debug.Log("Game data saved");
@@ -257,7 +257,7 @@ public class EditorUI : MonoBehaviour
 
     private void ControlMusic()
     {
-        if (audioSource.isPlaying)
+        if (_audioSource.isPlaying)
             PauseMusicActive(); 
         else
             PlayMusicActive();
@@ -265,7 +265,7 @@ public class EditorUI : MonoBehaviour
 
     private void PauseMusicActive()
     {
-        audioSource.Pause();
+        _audioSource.Pause();
         PlayImageEnable();
     }
     private void PlayImageEnable()
@@ -276,7 +276,7 @@ public class EditorUI : MonoBehaviour
 
     private void PlayMusicActive()
     {
-        audioSource.Play();
+        _audioSource.Play();
         PauseImageEnable();
     }
 
@@ -298,42 +298,42 @@ public class EditorUI : MonoBehaviour
 
     private void ChangeLvL(string lvl)
     {
-        if (currentActiveLvL.name.Equals(lvl))
+        if (_currentActiveLvL.name.Equals(lvl))
             return;
-        currentActiveLvL.localPosition = new Vector3(0.0f, -3.0f, 0.0f);
-        currentActiveLvL = currentItemTrack.transform.Find(lvl);
-        currentActiveLvL.localPosition = Vector3.zero;
-        currentActiveCube = null;
+        _currentActiveLvL.localPosition = new Vector3(0.0f, -3.0f, 0.0f);
+        _currentActiveLvL = _currentItemTrack.transform.Find(lvl);
+        _currentActiveLvL.localPosition = Vector3.zero;
+        _currentActiveCube = null;
 
         if (lvl.Equals("Under"))
         {
-            setBlockPositionUpper = setBlockPositionCurrent;
-            typeBlockUpper = typeBlockCurrent;
-            setBlockPositionCurrent = setBlockPositionUnder;
-            typeBlockCurrent = typeBlockUnder;
+            _setBlockPositionUpper = _setBlockPositionCurrent;
+            _typeBlockUpper = _typeBlockCurrent;
+            _setBlockPositionCurrent = _setBlockPositionUnder;
+            _typeBlockCurrent = _typeBlockUnder;
         }
 
         if (lvl.Equals("Upper"))
         {
-            setBlockPositionUnder = setBlockPositionCurrent;
-            typeBlockUnder = typeBlockCurrent;
-            setBlockPositionCurrent = setBlockPositionUpper;
-            typeBlockCurrent = typeBlockUpper;
+            _setBlockPositionUnder = _setBlockPositionCurrent;
+            _typeBlockUnder = _typeBlockCurrent;
+            _setBlockPositionCurrent = _setBlockPositionUpper;
+            _typeBlockCurrent = _typeBlockUpper;
         }
     }
 
     private void DeleteBlock()
     {
-        if (currentActiveCube == null) return;
+        if (_currentActiveCube == null) return;
 
 
-        CurrentIndexPositionCube = positionBlock.First(x => x.Value == currentActiveCube.transform.localPosition).Key;
+        CurrentIndexPositionCube = _positionBlock.First(x => x.Value == _currentActiveCube.transform.localPosition).Key;
 
-        Destroy(currentActiveCube); 
-        currentActiveCube = null;
+        Destroy(_currentActiveCube); 
+        _currentActiveCube = null;
 
-        setBlockPositionCurrent[CurrentIndexPositionCube] = Vector3.zero;
-        typeBlockCurrent[CurrentIndexPositionCube] = TypeBlock.Zero;
+        _setBlockPositionCurrent[CurrentIndexPositionCube] = Vector3.zero;
+        _typeBlockCurrent[CurrentIndexPositionCube] = TypeBlock.Zero;
     }
 
     private void EmptyCube()
@@ -358,9 +358,11 @@ public class EditorUI : MonoBehaviour
 
     private void SetBlockOnFreePlace(GameObject prefabBlock)
     {
+        int indexCurrent = GetIndexElement(_currentItemTrack);
+        if (indexCurrent < 3) return;
         var indexFreePlace = 0;
 
-        foreach (var pos in setBlockPositionCurrent)
+        foreach (var pos in _setBlockPositionCurrent)
         {
             if (pos != Vector3.zero)
                 indexFreePlace++;
@@ -373,11 +375,11 @@ public class EditorUI : MonoBehaviour
 
         CurrentIndexPositionCube = indexFreePlace;
 
-        currentActiveCube = Instantiate(prefabBlock, positionBlock[CurrentIndexPositionCube], Quaternion.identity, currentActiveLvL);
-        currentActiveCube.transform.localPosition = positionBlock[CurrentIndexPositionCube];
+        _currentActiveCube = Instantiate(prefabBlock, _positionBlock[CurrentIndexPositionCube], Quaternion.identity, _currentActiveLvL);
+        _currentActiveCube.transform.localPosition = _positionBlock[CurrentIndexPositionCube];
 
-        setBlockPositionCurrent[CurrentIndexPositionCube] = positionBlock[CurrentIndexPositionCube];
-        typeBlockCurrent[CurrentIndexPositionCube] = prefabBlock.name switch
+        _setBlockPositionCurrent[CurrentIndexPositionCube] = _positionBlock[CurrentIndexPositionCube];
+        _typeBlockCurrent[CurrentIndexPositionCube] = prefabBlock.name switch
         {
             "BlueCube" => TypeBlock.Blue,
             "RedCube" => TypeBlock.Red,
@@ -389,7 +391,7 @@ public class EditorUI : MonoBehaviour
 
     private void RightArrow()
     {
-        if (currentActiveCube == null) return;
+        if (_currentActiveCube == null) return;
 
         for (var i = CurrentIndexPositionCube - 1; i >= 0; i--)
         {
@@ -400,7 +402,7 @@ public class EditorUI : MonoBehaviour
 
     private void LeftArrow()
     {
-        if (currentActiveCube == null) return;
+        if (_currentActiveCube == null) return;
 
         for (var i = CurrentIndexPositionCube + 1; i < 12; i++)
         {
@@ -411,15 +413,15 @@ public class EditorUI : MonoBehaviour
 
     private bool ChangeBlockPosition(int indexPosition)
     {
-        if (setBlockPositionCurrent[indexPosition] == Vector3.zero)
+        if (_setBlockPositionCurrent[indexPosition] == Vector3.zero)
         {
-            setBlockPositionCurrent[CurrentIndexPositionCube] = Vector3.zero; // освобождаем место
-            var typeBlock = typeBlockCurrent[CurrentIndexPositionCube];
-            typeBlockCurrent[CurrentIndexPositionCube] = TypeBlock.Zero;
+            _setBlockPositionCurrent[CurrentIndexPositionCube] = Vector3.zero; // освобождаем место
+            var typeBlock = _typeBlockCurrent[CurrentIndexPositionCube];
+            _typeBlockCurrent[CurrentIndexPositionCube] = TypeBlock.Zero;
             CurrentIndexPositionCube = indexPosition; // записываем индекс новой позиции как текущей
-            currentActiveCube.transform.localPosition = positionBlock[CurrentIndexPositionCube]; // перемещаем куб на новую позицию (по индексу)
-            setBlockPositionCurrent[CurrentIndexPositionCube] = positionBlock[CurrentIndexPositionCube]; // занимаем место под куб
-            typeBlockCurrent[CurrentIndexPositionCube] = typeBlock;
+            _currentActiveCube.transform.localPosition = _positionBlock[CurrentIndexPositionCube]; // перемещаем куб на новую позицию (по индексу)
+            _setBlockPositionCurrent[CurrentIndexPositionCube] = _positionBlock[CurrentIndexPositionCube]; // занимаем место под куб
+            _typeBlockCurrent[CurrentIndexPositionCube] = typeBlock;
             return true;
         }
         return false;
@@ -428,7 +430,7 @@ public class EditorUI : MonoBehaviour
     private void Back()
     {
         SceneManager.LoadScene("TrackEditor");
-        audioSource.Play();
+        _audioSource.Play();
     }
 
     private void UpTrack()
@@ -455,92 +457,98 @@ public class EditorUI : MonoBehaviour
 
     private void releaseRay()
     {
-        Ray ray = Camera.main.ScreenPointToRay(ray_start_position);
+        Ray ray = Camera.main.ScreenPointToRay(_ray_start_position);
 
         RaycastHit hit;
-        Physics.Raycast(ray, out hit, Mathf.Infinity, layerMaskOnlyElementTrack);
+        Physics.Raycast(ray, out hit, Mathf.Infinity, _layerMaskOnlyElementTrack);
 
         if (hit.collider == null)
             return;
 
-        currentItemTrack = hit.collider.gameObject;
-
-        if (currentItemTrack == prevItemTrack) return;
+        _currentItemTrack = hit.collider.gameObject;
 
 
-        if (prevItemTrack != null)
+        if (_currentItemTrack == _prevItemTrack) return;
+
+
+        if (_prevItemTrack != null)
         {
-            prevItemTrack.GetComponent<MeshRenderer>().materials[0].color = Color.black;
+            int prevIndexElement = GetIndexElement(_prevItemTrack);
+            if (prevIndexElement > 2)
+                _prevItemTrack.GetComponent<MeshRenderer>().materials[0].color = Color.black;
 
             WriteDataAboutElementTrack();
         }
 
-        setBlockPositionCurrent = new Vector3[12];
-        typeBlockCurrent = new TypeBlock[12];
+        _setBlockPositionCurrent = new Vector3[12];
+        _typeBlockCurrent = new TypeBlock[12];
 
-        currentItemTrack.GetComponent<MeshRenderer>().materials[0].color = Color.red;
+        int indexCurrent = GetIndexElement(_currentItemTrack);
 
-        int indexCurrent = GetCurrentIndexElement();
+        if (indexCurrent > 2)
+            _currentItemTrack.GetComponent<MeshRenderer>().materials[0].color = Color.red;
 
-        if (!audioSource.isPlaying)
+
+        if (!_audioSource.isPlaying)
             ChangeSliderValue(indexCurrent);
 
         SetBlockPositionData(indexCurrent);
 
         IdentifyAndLoadActiveLvL();
 
-        prevItemTrack = currentItemTrack;
+        _prevItemTrack = _currentItemTrack;
+
     }
     
     private void WriteDataAboutElementTrack()
     {
-        if (currentActiveLvL.name.Equals("Under"))
+        if (_currentActiveLvL.name.Equals("Under"))
         {
-            setBlockPositionUnder = setBlockPositionCurrent;
-            typeBlockUnder = typeBlockCurrent;
+            _setBlockPositionUnder = _setBlockPositionCurrent;
+            _typeBlockUnder = _typeBlockCurrent;
         }
 
-        if (currentActiveLvL.name.Equals("Upper"))
+        if (_currentActiveLvL.name.Equals("Upper"))
         {
-            setBlockPositionUpper = setBlockPositionCurrent;
-            typeBlockUpper = typeBlockCurrent;
+            _setBlockPositionUpper = _setBlockPositionCurrent;
+            _typeBlockUpper = _typeBlockCurrent;
         }
 
-        var textNumItemInPrev = prevItemTrack.GetComponentInChildren<TextMeshPro>();
+        var textNumItemInPrev = _prevItemTrack.GetComponentInChildren<TextMeshPro>();
         var indexPrev = (Convert.ToInt32(textNumItemInPrev.text));
-        var item = new ItemTrack(setBlockPositionUpper, setBlockPositionUnder, typeBlockUpper, typeBlockUnder);
+        var item = new ItemTrack(_setBlockPositionUpper, _setBlockPositionUnder, _typeBlockUpper, _typeBlockUnder);
         SaveData.dataLvL[indexPrev] = item;
     }
 
-    private int GetCurrentIndexElement()
+    private int GetIndexElement(GameObject gameObject)
     {
-        var textNumItemInCurrent = currentItemTrack.GetComponentInChildren<TextMeshPro>();
-        var indexCurrent = Convert.ToInt32(textNumItemInCurrent.text);
-        return indexCurrent;
+        var textNumItemInCurrent = gameObject.GetComponentInChildren<TextMeshPro>();
+        var result = Convert.ToInt32(textNumItemInCurrent.text);
+        return result;
     }
 
     private void ChangeSliderValue(int indexCurrent)
     {
-        audioSource.time = indexCurrent;
-        sliderPlayingTrack.value = audioSource.time / audioSource.clip.length;
-        nowLengthTrack.text = TimeSpan.FromSeconds(audioSource.time).ToString(@"mm\:ss");
+        _audioSource.time = indexCurrent;
+        SliderPlayingTrack.value = _audioSource.time / _audioSource.clip.length;
+        NowLengthTrack.text = TimeSpan.FromSeconds(_audioSource.time).ToString(@"mm\:ss");
     }
 
     private void SetBlockPositionData(int indexCurrent)
     {
         if (SaveData.dataLvL.ContainsKey(indexCurrent))
         {
-            setBlockPositionUpper = GetVector3(SaveData.dataLvL[indexCurrent].BlockPositionUpper);
-            typeBlockUpper = SaveData.dataLvL[indexCurrent].typeBlockUpper;
-            setBlockPositionUnder = GetVector3(SaveData.dataLvL[indexCurrent].BlockPositionUnder);
-            typeBlockUnder = SaveData.dataLvL[indexCurrent].typeBlockUnder;
+            _setBlockPositionUpper = GetVector3(SaveData.dataLvL[indexCurrent].BlockPositionUpper);
+            _typeBlockUpper = SaveData.dataLvL[indexCurrent].typeBlockUpper;
+            _setBlockPositionUnder = GetVector3(SaveData.dataLvL[indexCurrent].BlockPositionUnder);
+            _typeBlockUnder = SaveData.dataLvL[indexCurrent].typeBlockUnder;
         }
         else
         {
-            setBlockPositionUpper = new Vector3[12];
-            typeBlockUpper = new TypeBlock[12];
-            setBlockPositionUnder = new Vector3[12];
-            typeBlockUnder = new TypeBlock[12];
+            _setBlockPositionUpper = new Vector3[12];
+            _typeBlockUpper = new TypeBlock[12];
+            _setBlockPositionUnder = new Vector3[12];
+            _typeBlockUnder = new TypeBlock[12];
         }
     }
 
@@ -558,21 +566,21 @@ public class EditorUI : MonoBehaviour
 
     private void IdentifyAndLoadActiveLvL()
     {
-        var underLVL = currentItemTrack.transform.Find("Under");
-        var upperLVL = currentItemTrack.transform.Find("Upper");
+        var underLVL = _currentItemTrack.transform.Find("Under");
+        var upperLVL = _currentItemTrack.transform.Find("Upper");
 
         if (upperLVL.localPosition == Vector3.zero)
         {
-            currentActiveLvL = upperLVL;
-            setBlockPositionCurrent = setBlockPositionUpper;
-            typeBlockCurrent = typeBlockUpper;
+            _currentActiveLvL = upperLVL;
+            _setBlockPositionCurrent = _setBlockPositionUpper;
+            _typeBlockCurrent = _typeBlockUpper;
         }
 
         if (underLVL.localPosition == Vector3.zero)
         {
-            currentActiveLvL = underLVL;
-            setBlockPositionCurrent = setBlockPositionUnder;
-            typeBlockCurrent = typeBlockUnder;
+            _currentActiveLvL = underLVL;
+            _setBlockPositionCurrent = _setBlockPositionUnder;
+            _typeBlockCurrent = _typeBlockUnder;
          }
     }
 
@@ -581,13 +589,13 @@ public class EditorUI : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMaskOnlyCube))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, _layerMaskOnlyCube))
         {
 
             if (hit.collider.tag.Equals("Cube"))
             {
-                currentActiveCube = hit.collider.gameObject;
-                CurrentIndexPositionCube = positionBlock.First(x => x.Value == currentActiveCube.transform.localPosition).Key;
+                _currentActiveCube = hit.collider.gameObject;
+                CurrentIndexPositionCube = _positionBlock.First(x => x.Value == _currentActiveCube.transform.localPosition).Key;
             }
         }
     }
