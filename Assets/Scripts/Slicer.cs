@@ -4,15 +4,13 @@ using TMPro;
 
 public class Slicer : MonoBehaviour
 {
-    public Transform cube;
-    public Transform cutPlane;
-    public Material crossMaterial;
+    public Transform CutPlane;
+    public Material CrossMaterial;
 
-    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI ScoreText;
     public TextMeshProUGUI numberComboText;
 
     public static int combo;
-
     private double score;
     private const int point = 1;
 
@@ -33,7 +31,7 @@ public class Slicer : MonoBehaviour
 
         numberComboText.text = combo.ToString();
 
-        scoreText.text = score.ToString();
+        ScoreText.text = score.ToString();
     }
 
 
@@ -42,15 +40,15 @@ public class Slicer : MonoBehaviour
         if (otherObj.gameObject.CompareTag("Cube"))
         {
             var angleForCut = Mathf.Atan2(transform.position.y, transform.position.x) * (180 / Mathf.PI);
-            cutPlane.transform.eulerAngles = new Vector3(0, 0, angleForCut);
+            CutPlane.transform.eulerAngles = new Vector3(0, 0, angleForCut);
 
 
-            SlicedHull hull = SliceObject(otherObj.gameObject, crossMaterial);
+            SlicedHull hull = SliceObject(otherObj.gameObject, CrossMaterial);
 
             if (hull != null)
             {
-                GameObject bottom = hull.CreateLowerHull(otherObj.gameObject, crossMaterial);
-                GameObject top = hull.CreateUpperHull(otherObj.gameObject, crossMaterial);
+                GameObject bottom = hull.CreateLowerHull(otherObj.gameObject, CrossMaterial);
+                GameObject top = hull.CreateUpperHull(otherObj.gameObject, CrossMaterial);
                 AddHullComponents(bottom);
                 AddHullComponents(top);
                 Destroy(otherObj.gameObject);
@@ -84,7 +82,7 @@ public class Slicer : MonoBehaviour
         if (obj.GetComponent<MeshFilter>() == null)
             return null;
 
-        return obj.Slice(cutPlane.position, cutPlane.up, crossSectionMaterial);
+        return obj.Slice(CutPlane.position, CutPlane.up, crossSectionMaterial);
     }
 
 }

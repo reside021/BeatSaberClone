@@ -12,25 +12,25 @@ public class EditorScene : MonoBehaviour
     public GameObject BombPrefab;
 
 
-    private GameObject soundManager;
+    private GameObject _soundManager;
 
-    private AudioSource audioSource;
+    private AudioSource _audioSource;
 
     private Rigidbody _rb;
 
-    private Vector3 endTrackRoad = Vector3.zero;
+    private Vector3 _endTrackRoad = Vector3.zero;
 
-    private int heightScreen;
+    private int _heightScreen;
 
-    private bool isDragging = false;
-    private bool wasPlaying = false;
+    private bool _isDragging = false;
+    private bool _wasPlaying = false;
 
-    private float prevPos = 0f;
+    private float _prevPos = 0f;
 
     private void Awake()
     {
-        soundManager = GameObject.FindGameObjectsWithTag("SoundManager")[0];
-        audioSource = soundManager.GetComponent<AudioSource>();
+        _soundManager = GameObject.FindGameObjectsWithTag("SoundManager")[0];
+        _audioSource = _soundManager.GetComponent<AudioSource>();
     }
     void Start()
     {
@@ -38,7 +38,7 @@ public class EditorScene : MonoBehaviour
         LoadGame();
         CreateTrackRoad();
         _rb = GetComponent<Rigidbody>();
-        heightScreen = Screen.height;
+        _heightScreen = Screen.height;
     }
 
     private void LoadGame()
@@ -47,7 +47,7 @@ public class EditorScene : MonoBehaviour
         if (!Directory.Exists(mySubFolder))
             return;
 
-        var myFile = mySubFolder + $"/{audioSource.clip.name}.dat";
+        var myFile = mySubFolder + $"/{_audioSource.clip.name}.dat";
 
         if (!File.Exists(myFile))
             return;
@@ -60,7 +60,7 @@ public class EditorScene : MonoBehaviour
 
     private void CreateTrackRoad()
     {
-        int lengthTrack = Mathf.RoundToInt(audioSource.clip.length);
+        int lengthTrack = Mathf.RoundToInt(_audioSource.clip.length);
 
         var blockOffset = 10.1f;
 
@@ -86,12 +86,7 @@ public class EditorScene : MonoBehaviour
                 {
                     if (blockPositionUnder[j] != Vector3.zero)
                     {
-                        var currentPrefab = typeBlockUnder[j] switch
-                        {
-                            TypeBlock.Blue => BlueCubePrefab,
-                            TypeBlock.Red => RedCubePrefab,
-                            TypeBlock.Bomb => BombPrefab
-                        };
+                        var currentPrefab = GetCurrentPrefab(typeBlockUnder[j]);
 
                         var underBlock = Instantiate(currentPrefab, blockPositionUnder[j], Quaternion.identity, underLVL);
                         underBlock.transform.localPosition = blockPositionUnder[j];
@@ -99,12 +94,7 @@ public class EditorScene : MonoBehaviour
 
                     if (blockPositionUpper[j] != Vector3.zero)
                     {
-                        var currentPrefab = typeBlockUpper[j] switch
-                        {
-                            TypeBlock.Blue => BlueCubePrefab,
-                            TypeBlock.Red => RedCubePrefab,
-                            TypeBlock.Bomb => BombPrefab
-                        };
+                        var currentPrefab = GetCurrentPrefab(typeBlockUpper[j]);
 
                         var upperBlock = Instantiate(currentPrefab, blockPositionUpper[j], Quaternion.identity, upperLVL);
                         upperBlock.transform.localPosition = blockPositionUpper[j];
@@ -114,11 +104,24 @@ public class EditorScene : MonoBehaviour
 
             var textNumItem = item.GetComponentInChildren<TextMeshPro>();
             textNumItem.text = i.ToString();
+            if (i < 3)
+                item.GetComponent<MeshRenderer>().materials[0].color = Color.gray;
 
             position.x -= blockOffset;
         }
 
-        endTrackRoad = -(position += new Vector3(blockOffset, 0.0f, 0.0f));
+        _endTrackRoad = -(position += new Vector3(blockOffset, 0.0f, 0.0f));
+    }
+
+    GameObject GetCurrentPrefab(TypeBlock typeBlock)
+    {
+        GameObject result = typeBlock switch
+        {
+            TypeBlock.Blue => BlueCubePrefab,
+            TypeBlock.Red => RedCubePrefab,
+            TypeBlock.Bomb => BombPrefab
+        };
+        return result;
     }
 
     private Vector3[] GetVector3(CustomVector3[] vectorForTrans)
@@ -136,11 +139,11 @@ public class EditorScene : MonoBehaviour
     private void FixedUpdate()
     {
 
-        if (isDragging)
+        if (_isDragging)
         {
-            var offset = prevPos - Input.mousePosition.y;
+            var offset = _prevPos - Input.mousePosition.y;
 
-            var coef = offset / heightScreen * 1.5f;
+            var coef = offset / _heightScreen * 1.5f;
 
             var newX = transform.position.x + coef;
 
@@ -152,16 +155,16 @@ public class EditorScene : MonoBehaviour
             SmoothDrag(Vector3.zero, Time.fixedDeltaTime * 5);
         }
 
-        if (_rb.position.x > (endTrackRoad.x + 0.1f))
+        if (_rb.position.x > (_endTrackRoad.x + 0.1f))
         {
-            SmoothDrag(endTrackRoad, Time.fixedDeltaTime * 10);
+            SmoothDrag(_endTrackRoad, Time.fixedDeltaTime * 10);
         }
     }
 
 
     private void OnMouseDrag()
     {
-        isDragging = true;
+        _isDragging = true;
     }
 
     public void SmoothDrag(Vector3 targetPosition, float elapsed)
@@ -177,17 +180,17 @@ public class EditorScene : MonoBehaviour
 
     private void OnMouseDown()
     {
-        wasPlaying = audioSource.isPlaying;
-        audioSource.Pause();
-        prevPos = Input.mousePosition.y;
+        _wasPlaying = _audioSource.isPlaying;
+        _audioSource.Pause();
+        _prevPos = Input.mousePosition.y;
     }
 
     private void OnMouseUp()
     {
-        if (wasPlaying)
-            audioSource.Play();
-        isDragging = false;
-        wasPlaying = audioSource.isPlaying;
+        if (_wasPlaying)
+            _audioSource.Play();
+        _isDragging = false;
+        _wasPlaying = _audioSource.isPlaying;
     }
 
 }
