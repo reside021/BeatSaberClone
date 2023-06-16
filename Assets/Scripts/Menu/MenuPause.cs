@@ -12,9 +12,11 @@ public class MenuPause : MonoBehaviour
     public Button BtnContinue;
     public Button BtnRepeat;
     public Button BtnMenu;
+    public Button BtnGameOverRepeat;
+    public Button BtnGameOverMenu;
 
-    private GameObject soundManager;
-    private AudioSource audioSource;
+    private GameObject _soundManager;
+    private AudioSource _audioSource;
 
     void Start()
     {
@@ -22,14 +24,16 @@ public class MenuPause : MonoBehaviour
         BtnContinue.onClick.AddListener(ContinueGame);
         BtnRepeat.onClick.AddListener(RestartLevel);
         BtnMenu.onClick.AddListener(GoToMenu);
+        BtnGameOverRepeat.onClick.AddListener(RestartLevel);
+        BtnGameOverMenu.onClick.AddListener(GoToMenu);
 
-        soundManager = GameObject.FindGameObjectsWithTag("SoundManager")[0];
-        audioSource = soundManager.GetComponent<AudioSource>();
+        _soundManager = GameObject.FindGameObjectsWithTag("SoundManager")[0];
+        _audioSource = _soundManager.GetComponent<AudioSource>();
     }
 
     private void PauseGame()
     {
-        audioSource.Pause();
+        _audioSource.Pause();
         panelPause.SetActive(true);
         Time.timeScale = 0f;
     }
@@ -38,7 +42,7 @@ public class MenuPause : MonoBehaviour
     {
         panelPause.SetActive(false);
         Time.timeScale = 1f;
-        audioSource.UnPause();
+        _audioSource.UnPause();
     }
 
     private void RestartLevel()
@@ -51,8 +55,9 @@ public class MenuPause : MonoBehaviour
     {
         SceneManager.LoadScene("Menu");
         Time.timeScale = 1f;
-        audioSource.Stop();
-        audioSource.Play();
+        _audioSource.Stop();
+        _audioSource.time = 0;
+        _audioSource.Play();
     }
 
 }

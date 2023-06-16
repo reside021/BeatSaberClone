@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class MenuButton : MonoBehaviour
 {
-    public GameObject _exitMenu;
+    public GameObject ExitMenu;
     public AudioSource SoundManager;
 
     public Button BtnPlay;
@@ -44,7 +44,7 @@ public class MenuButton : MonoBehaviour
 
     private void ExitMessageMenu()
     {
-        _exitMenu.SetActive(true);
+        ExitMenu.SetActive(true);
     }
 
     private void ExitGame()
@@ -55,7 +55,7 @@ public class MenuButton : MonoBehaviour
 
     private void CancelExit()
     {
-        _exitMenu.SetActive(false);
+        ExitMenu.SetActive(false);
     }
 
 }
