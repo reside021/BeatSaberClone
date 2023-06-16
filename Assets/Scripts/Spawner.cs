@@ -44,7 +44,6 @@ public class Spawner : MonoBehaviour
     public GameObject RedCubePrefab;
     public GameObject BlueCubePrefab;
     public GameObject BombPrefab;
-    public TextMeshProUGUI ProgressProcent;
 
     private GameObject _soundManager;
 
@@ -55,6 +54,8 @@ public class Spawner : MonoBehaviour
     private Dictionary<int, ItemTrack> _blockDataOnLvL;
     private List<ElementForSpawn> _elementForSpawns;
 
+    public static float TotalBlocks;
+
     private void Awake()
     {
         _soundManager = GameObject.FindGameObjectsWithTag("SoundManager")[0];
@@ -63,6 +64,7 @@ public class Spawner : MonoBehaviour
 
     void Start()
     {
+        TotalBlocks = 0.0f;
         _blockDataOnLvL = new Dictionary<int, ItemTrack>();
         _elementForSpawns = new List<ElementForSpawn>();
         LoadLvL();
@@ -75,13 +77,6 @@ public class Spawner : MonoBehaviour
     void FixedUpdate()
     {
         MovementLogic();
-        DisplayProgressProcent();
-    }
-
-    void DisplayProgressProcent()
-    {
-        var value = Math.Truncate(_audioSource.time / _audioSource.clip.length * 100);
-        ProgressProcent.text = value.ToString();
     }
 
     IEnumerator PlayMusic()
@@ -120,6 +115,7 @@ public class Spawner : MonoBehaviour
                 var newCube = Instantiate(currentPrefab, transformForSpawn).transform;
                 newCube.localPosition = Vector3.zero;
                 newCube.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                TotalBlocks++;
             }
 
             if (el.index != el.nextIndex)
