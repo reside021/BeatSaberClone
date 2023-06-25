@@ -8,7 +8,7 @@ public class ResetCombo : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Cube"))
         {
-            Slicer.combo = 1;
+            Blade.combo = 1;
         }
     }
 }

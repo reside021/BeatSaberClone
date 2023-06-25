@@ -114,7 +114,6 @@ public class Spawner : MonoBehaviour
                 var currentPrefab = GetCurrentPrefab(dict.Value);
                 var newCube = Instantiate(currentPrefab, transformForSpawn).transform;
                 newCube.localPosition = Vector3.zero;
-                newCube.localScale = new Vector3(0.3f, 0.3f, 0.3f);
                 TotalBlocks++;
             }
 
