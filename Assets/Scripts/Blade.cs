@@ -19,6 +19,7 @@ public class Blade : MonoBehaviour
 
     private Camera mainCamera;
     private Collider bladeCollider;
+    private TrailRenderer bladeTrail;
     private GameObject _soundManager;
     private AudioSource _audioSource;
 
@@ -42,6 +43,7 @@ public class Blade : MonoBehaviour
         _audioSource = _soundManager.GetComponent<AudioSource>();
         mainCamera = Camera.main;
         bladeCollider = GetComponent<Collider>();
+        bladeTrail = GetComponentInChildren<TrailRenderer>();
     }
     private void Start()
     {
@@ -86,12 +88,15 @@ public class Blade : MonoBehaviour
 
         slicing = true;
         bladeCollider.enabled = true;
+        bladeTrail.enabled = true;
+        bladeTrail.Clear();
     }
 
     private void StopSlicing()
     {
         slicing = false;
         bladeCollider.enabled = false;
+        bladeTrail.enabled = false;
     }
 
     private void ContinueSlicing()
@@ -124,6 +129,8 @@ public class Blade : MonoBehaviour
     {
         var cubeCollider = set_cube.gameObject.GetComponent<Collider>();
         var cubeRigidbody = set_cube.gameObject.GetComponent<Rigidbody>();
+        var audioSource = set_cube.gameObject.GetComponent<AudioSource>();
+        audioSource.Play();
         var whole = set_cube.GetChild(0).gameObject;
         var sliced = set_cube.GetChild(1).gameObject;
 
