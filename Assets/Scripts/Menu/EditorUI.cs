@@ -80,7 +80,6 @@ public class EditorUI : MonoBehaviour
     public Button BtnRedCube;
     public Button BtnBlueCube;
     public Button BtnBomb;
-    public Button BtnEmptyCube;
     public Button BtnDeleteBlock;
     public Button BtnControlMusic;
     public Button BtnSaveLvL;
@@ -210,7 +209,6 @@ public class EditorUI : MonoBehaviour
         BtnRedCube.onClick.AddListener(RedCube);
         BtnBlueCube.onClick.AddListener(BlueCube);
         BtnBomb.onClick.AddListener(Bomb);
-        BtnEmptyCube.onClick.AddListener(EmptyCube);
         BtnDeleteBlock.onClick.AddListener(DeleteBlock);
         BtnControlMusic.onClick.AddListener(ControlMusic);
         BtnSaveLvL.onClick.AddListener(SaveLvL);
@@ -334,11 +332,6 @@ public class EditorUI : MonoBehaviour
 
         _setBlockPositionCurrent[CurrentIndexPositionCube] = Vector3.zero;
         _typeBlockCurrent[CurrentIndexPositionCube] = TypeBlock.Zero;
-    }
-
-    private void EmptyCube()
-    {
-        
     }
 
     private void Bomb()

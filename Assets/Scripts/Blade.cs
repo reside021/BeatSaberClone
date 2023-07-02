@@ -143,8 +143,6 @@ public class Blade : MonoBehaviour
 
         foreach (var slice in slices)
         {
-            //slice.velocity = cubeRigidbody.velocity;
-            //slice.AddExplosionForce(100, position, 20);
             slice.AddExplosionForce(100, slice.transform.position, 20);
         }
         AddScoreAndCombo();
