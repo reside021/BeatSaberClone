@@ -14,3 +14,6 @@ UPD:
 
 ![Alt text](/demo/screen/Editor.png "Редактор")
 
+![Alt text](/demo/screen/EditorTrack.png "Редактор трека")
+
+![Alt text](/demo/screen/Game.png "Игра")
